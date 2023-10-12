@@ -3,6 +3,9 @@ const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
+const jwt = require("jsonwebtoken");
+const jwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 
 const customErrorhandler = require("./middleware/errorhandler.middleware");
 const authRouter = require("./routes/auth/auth.router");
@@ -25,6 +28,7 @@ const verifyCallback = (accessToken, refreshToken, profile, done) => {
 passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyCallback));
 
 app.use("/auth", authRouter);
+
 app.use(customErrorhandler);
 
 module.exports = app;

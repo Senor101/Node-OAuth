@@ -8,7 +8,10 @@ const authController = require("./auth.controller");
 router.post("/email/register", authController.registerUser);
 router.post("/email/login", authController.loginUser);
 
-router.get("/google");
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
 router.get("/google/callback");
 
@@ -17,3 +20,5 @@ router.get("/facebook");
 router.get("/facebook/callback");
 
 router.post("/logout/:id");
+
+module.exports = router;
