@@ -3,8 +3,10 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-router.post("/email/register");
-router.post("/email/login");
+const authController = require("./auth.controller");
+
+router.post("/email/register", authController.registerUser);
+router.post("/email/login", authController.loginUser);
 
 router.get("/google");
 
