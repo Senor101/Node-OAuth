@@ -12,8 +12,21 @@ const authRouter = require("./routes/auth/auth.router");
 const config = require("./config/env.config");
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(passport.initialize());
+
+var opts = {};
+const cookieExtractor = (req) => {
+  var token = null;
+  if (req && req.cookies) token = req.cookies["jwt"];
+  return token;
+};
+opts.secretOrKey = "secret";
+
+opts.jwtFromRequest = cookieExtractor;
 
 const GOOGLE_AUTH_OPTIONS = {
   clientID: config.GOOGLE_CLIENT_ID,
@@ -26,6 +39,16 @@ const verifyCallback = (accessToken, refreshToken, profile, done) => {
 };
 
 passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyCallback));
+
+passport.serializeUser((user, done) => {
+  console.log(`user, ${user}`);
+  done(null, user);
+});
+
+passport.deserializeUser((id, done) => {
+  console.log(`id, ${id}`);
+  done(null, id);
+});
 
 app.use("/auth", authRouter);
 
