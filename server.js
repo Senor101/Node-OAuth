@@ -1,11 +1,18 @@
 const http = require("http");
+require("dotenv").config();
 
 const app = require("./app");
+const connectDB = require("./config/db.config");
+
+const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
 const startServer = async () => {
-  server.listen(3000, () => {
-    console.log("Server is listening on port 3000");
+  await connectDB();
+  server.listen(PORT, () => {
+    console.log(`Server running at ${PORT}`);
   });
 };
+
+startServer();
