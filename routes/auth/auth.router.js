@@ -23,27 +23,27 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google"),
+  passport.authenticate("google", { session: false }),
   async (req, res) => {
-    console.log("redirected", req.user);
+    // console.log("redirected", req.user);
     let user = {
-      displayName: req.user.displayName,
-      name: req.user.name.givenName,
+      name: req.user._json.name,
       email: req.user._json.email,
       provider: req.user.provider,
     };
-    console.log(user);
-
     await findOrCreateUser(user);
     let token = jwt.sign(
       {
-        data: userExist,
+        data: {
+          email: user.email,
+        },
       },
       "secret",
       { expiresIn: "1h" }
     );
+    // console.log(`token: ${token}`);
     res.cookie("jwt", token);
-    res.redirect("/");
+    res.redirect("/auth/profile");
   }
 );
 
