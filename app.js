@@ -10,6 +10,7 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const customErrorhandler = require("./middleware/errorhandler.middleware");
 const authRouter = require("./routes/auth/auth.router");
 const config = require("./config/env.config");
+const JwtStrategy = require("passport-jwt/lib/strategy");
 
 const app = express();
 
@@ -28,6 +29,13 @@ opts.secretOrKey = "secret";
 
 opts.jwtFromRequest = cookieExtractor;
 
+passport.use(
+  new JwtStrategy(opts, function (jwt_payload, done) {
+    console.log(`JWT ${jwt_payload}`);
+    return done(null, jwt_payload);
+  })
+);
+
 const GOOGLE_AUTH_OPTIONS = {
   clientID: config.GOOGLE_CLIENT_ID,
   clientSecret: config.GOOGLE_CLIENT_SECRET,
@@ -35,6 +43,7 @@ const GOOGLE_AUTH_OPTIONS = {
 };
 
 const verifyCallback = (accessToken, refreshToken, profile, done) => {
+  console.log(`Google callback ${profile}`);
   return done(null, profile);
 };
 
