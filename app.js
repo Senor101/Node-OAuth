@@ -4,18 +4,18 @@ const cookieParser = require("cookie-parser");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const jwt = require("jsonwebtoken");
-const jwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
+const JwtStrategy = require("passport-jwt").Strategy,
+  ExtractJwt = require("passport-jwt").ExtractJwt;
 
 const customErrorhandler = require("./middleware/errorhandler.middleware");
 const authRouter = require("./routes/auth/auth.router");
 const config = require("./config/env.config");
-const JwtStrategy = require("passport-jwt/lib/strategy");
+const { checkUser, findOrCreateUser } = require("./utils/functions.util");
 
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
@@ -26,15 +26,7 @@ const cookieExtractor = (req) => {
   return token;
 };
 opts.secretOrKey = "secret";
-
 opts.jwtFromRequest = cookieExtractor;
-
-passport.use(
-  new JwtStrategy(opts, function (jwt_payload, done) {
-    console.log(`JWT ${jwt_payload}`);
-    return done(null, jwt_payload);
-  })
-);
 
 const GOOGLE_AUTH_OPTIONS = {
   clientID: config.GOOGLE_CLIENT_ID,
@@ -46,6 +38,19 @@ const verifyCallback = (accessToken, refreshToken, profile, done) => {
   console.log(`Google callback ${profile}`);
   return done(null, profile);
 };
+
+passport.use(
+  new JwtStrategy(opts, async function (jwt_payload, done) {
+    console.log(`JWT ${jwt_payload}`);
+    if (await checkUser(jwt_payload.data.email)) {
+      console.log(`user found`);
+      return done(null, jwt_payload.data);
+    } else {
+      console.log(`user not found`);
+      return done(null, false);
+    }
+  })
+);
 
 passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyCallback));
 
@@ -59,7 +64,37 @@ passport.deserializeUser((id, done) => {
   done(null, id);
 });
 
-app.use("/auth", authRouter);
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
+  async (req, res) => {
+    console.log("redirected", req.user);
+    let user = {
+      displayName: req.user.displayName,
+      name: req.user.name.givenName,
+      email: req.user._json.email,
+      provider: req.user.provider,
+    };
+    console.log(user);
+
+    await findOrCreateUser(user);
+    let token = jwt.sign(
+      {
+        data: user,
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    res.cookie("jwt", token);
+    res.redirect("/");
+  }
+);
+
+// app.use("/auth", authRouter);
 
 app.use(customErrorhandler);
 

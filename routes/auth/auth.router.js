@@ -1,8 +1,9 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const passport = require("passport");
 const router = express.Router();
-const User = require("../../models/user.model");
+const { checkUser, findOrCreateUser } = require("../../utils/functions.util");
 
 const authController = require("./auth.controller");
 
@@ -33,10 +34,7 @@ router.get(
     };
     console.log(user);
 
-    const userExist = await User.find({ email: user.email });
-    if (!userExist) {
-      const userExist = await User.create(user);
-    }
+    await findOrCreateUser(user);
     let token = jwt.sign(
       {
         data: userExist,
