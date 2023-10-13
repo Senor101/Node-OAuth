@@ -1,5 +1,7 @@
 const User = require("../../models/user.model");
+const { findOrCreateUser } = require("../../utils/functions.util");
 
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const registerUser = async (req, res, next) => {
@@ -42,4 +44,34 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const googleCallbackHandler = async (req, res, next) => {
+  try {
+    // console.log("redirected", req.user);
+    let user = {
+      name: req.user._json.name,
+      email: req.user._json.email,
+      provider: req.user.provider,
+    };
+    await findOrCreateUser(user);
+    let token = jwt.sign(
+      {
+        data: {
+          email: user.email,
+        },
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    // console.log(`token: ${token}`);
+    res.cookie("jwt", token);
+    // res.redirect("/auth/profile");
+    res.status(201).json({
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { registerUser, loginUser, googleCallbackHandler };

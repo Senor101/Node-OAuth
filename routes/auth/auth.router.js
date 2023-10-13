@@ -24,27 +24,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
-  async (req, res) => {
-    // console.log("redirected", req.user);
-    let user = {
-      name: req.user._json.name,
-      email: req.user._json.email,
-      provider: req.user.provider,
-    };
-    await findOrCreateUser(user);
-    let token = jwt.sign(
-      {
-        data: {
-          email: user.email,
-        },
-      },
-      "secret",
-      { expiresIn: "1h" }
-    );
-    // console.log(`token: ${token}`);
-    res.cookie("jwt", token);
-    res.redirect("/auth/profile");
-  }
+  authController.googleCallbackHandler
 );
 
 router.get("/facebook");
