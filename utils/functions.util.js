@@ -8,8 +8,6 @@ const checkUser = async (email) => {
 };
 
 const findOrCreateUser = async (user) => {
-  // console.log(user);
-  // console.log(user.name);
   if (await checkUser(user.email)) {
     return await User.findOne({ email: user.email });
   } else {
@@ -18,7 +16,6 @@ const findOrCreateUser = async (user) => {
       email: user.email,
       provider: user.provider,
     });
-    // return newUser;
   }
 };
 
