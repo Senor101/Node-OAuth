@@ -27,9 +27,19 @@ router.get(
   authController.googleCallbackHandler
 );
 
-router.get("/facebook");
+router.get("/facebook", passport.authenticate("facebook"));
 
-router.get("/facebook/callback");
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { session: false }),
+  (req, res) => {
+    console.log("redirected to facebook");
+    console.log(req.user);
+    return res.json({
+      message: `${req.user._json.name} is logged in`,
+    });
+  }
+);
 
 router.post("/logout/:id");
 

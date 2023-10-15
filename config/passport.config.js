@@ -23,10 +23,10 @@ const GOOGLE_AUTH_OPTIONS = {
   clientSecret: config.GOOGLE_CLIENT_SECRET,
   callbackURL: "http://localhost:3000/auth/google/callback",
 };
-
-const verifyGoogleCallback = (accessToken, refreshToken, profile, done) => {
-  // console.log(`Google callback ${profile}`);
-  return done(null, profile);
+const FACEBOOK_AUTH_OPTIONS = {
+  clientID: config.FACEBOOK_CLIENT_ID,
+  clientSecret: config.FACEBOOK_CLIENT_SECRET,
+  callbackURL: "http://localhost:3000/auth/facebook/callback",
 };
 
 const verifyJwtCallback = async (jwt_payload, done) => {
@@ -40,9 +40,22 @@ const verifyJwtCallback = async (jwt_payload, done) => {
   }
 };
 
+const verifyGoogleCallback = (accessToken, refreshToken, profile, done) => {
+  // console.log(`Google callback ${profile}`);
+  return done(null, profile);
+};
+
+const verifyFacebookCallback = (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+};
+
 passport.use(new JwtStrategy(JWT_OPTIONS, verifyJwtCallback));
 
 passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyGoogleCallback));
+
+passport.use(
+  new FacebookStrategy(FACEBOOK_AUTH_OPTIONS, verifyFacebookCallback)
+);
 
 passport.serializeUser((user, done) => {
   // console.log(`user, ${user}`);
