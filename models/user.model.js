@@ -16,7 +16,7 @@ const userSchema = new Schema({
     trim: true,
     unique: true,
     lowercase: true,
-    required: true,
+    // required: true,
   },
   password: {
     type: String,
@@ -25,6 +25,9 @@ const userSchema = new Schema({
   provider: {
     type: String,
     default: "local",
+  },
+  providerId: {
+    type: String,
   },
 });
 

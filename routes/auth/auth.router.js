@@ -32,13 +32,7 @@ router.get("/facebook", passport.authenticate("facebook"));
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", { session: false }),
-  (req, res) => {
-    console.log("redirected to facebook");
-    console.log(req.user);
-    return res.json({
-      message: `${req.user._json.name} is logged in`,
-    });
-  }
+  authController.facebookCallbackHandler
 );
 
 router.post("/logout/:id");

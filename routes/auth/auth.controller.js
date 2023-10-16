@@ -6,11 +6,12 @@ const bcrypt = require("bcrypt");
 
 const googleCallbackHandler = async (req, res, next) => {
   try {
-    // console.log("redirected", req.user);
+    console.log("redirected", req.user);
     let user = {
       name: req.user._json.name,
       email: req.user._json.email,
       provider: req.user.provider,
+      providerId: req.user.id,
     };
     await findOrCreateUser(user);
     let token = jwt.sign(
@@ -24,7 +25,35 @@ const googleCallbackHandler = async (req, res, next) => {
     );
     res.cookie("jwt", token);
     // res.redirect("/auth/profile");
-    res.status(201).json({
+    return res.status(201).json({
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const facebookCallbackHandler = async (req, res, next) => {
+  try {
+    console.log(`redirected by facebook ${req.user}`);
+    let user = {
+      name: req.user._json.name,
+      provider: req.user.provider,
+      providerId: req.user._json.id,
+    };
+    await findOrCreateUser(user);
+    let token = jwt.sign(
+      {
+        data: {
+          id: user.providerId,
+        },
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    res.cookie("jwt", token);
+    return res.status(200).json({
       message: "User logged in successfully",
       data: user,
     });
@@ -73,4 +102,9 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, googleCallbackHandler };
+module.exports = {
+  registerUser,
+  loginUser,
+  googleCallbackHandler,
+  facebookCallbackHandler,
+};
