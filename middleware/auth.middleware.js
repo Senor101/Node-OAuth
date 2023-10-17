@@ -13,7 +13,7 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
     // console.log(user);
-    const requiredUser = await User.findOne({ email: user.email });
+    const requiredUser = await User.findOne({ providerId: user.providerId });
     req.user = requiredUser._id;
     return next();
   })(req, res, next);

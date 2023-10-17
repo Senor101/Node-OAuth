@@ -13,11 +13,12 @@ const googleCallbackHandler = async (req, res, next) => {
       provider: req.user.provider,
       providerId: req.user.id,
     };
-    await findOrCreateUser(user);
+    const requiredUser = await findOrCreateUser(user);
     let token = jwt.sign(
       {
         data: {
-          email: user.email,
+          providerId: requiredUser.providerId,
+          provider: requiredUser.provider,
         },
       },
       "secret",
@@ -42,11 +43,11 @@ const facebookCallbackHandler = async (req, res, next) => {
       provider: req.user.provider,
       providerId: req.user._json.id,
     };
-    await findOrCreateUser(user);
+    const requiredUser = await findOrCreateUser(user);
     let token = jwt.sign(
       {
         data: {
-          id: user.providerId,
+          id: requiredUser._id,
         },
       },
       "secret",

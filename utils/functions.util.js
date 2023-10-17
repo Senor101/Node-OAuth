@@ -1,21 +1,20 @@
 const User = require("../models/user.model");
 
-const checkUser = async (email) => {
-  const user = await User.findOne({ email: email });
+const checkUser = async (providerId, provider) => {
+  const user = await User.findOne({
+    providerId: providerId,
+    provider: provider,
+  });
   if (user) {
     return true;
   } else return false;
 };
 
 const findOrCreateUser = async (user) => {
-  if (await checkUser(user.email)) {
-    return await User.findOne({ email: user.email });
+  if (await checkUser(user.providerId, user.provider)) {
+    return await User.findOne({ providerId: user.providerId });
   } else {
-    await User.create({
-      name: user.name,
-      email: user.email,
-      provider: user.provider,
-    });
+    return await User.create(user);
   }
 };
 
