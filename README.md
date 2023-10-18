@@ -32,7 +32,7 @@ To install this project
    ```
 4. Configure the environment variables:
 
-- Create a `.env` file in the project root directory.
+- Create a `.env` file in the project root directory. Include the credentials provided in `.env.example` file.
 
 5. Run the application:
    ```bash
@@ -42,3 +42,23 @@ To install this project
    ```bash
     http://localhost:3000/
    ```
+
+## REST API
+
+This oauth project can be used as
+
+### Google Oauth
+
+For using google oauth, access the google auth route as
+
+```bash
+ http://localhost:3000/auth/google
+```
+
+### Facebook Oauth
+
+For using facebook oauth, access the facebook auth route as
+
+```bash
+ http://localhost:3000/auth/facebook
+```
