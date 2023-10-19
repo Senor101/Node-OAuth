@@ -80,7 +80,7 @@ const registerUser = async (req, res, next) => {
       { expiresIn: "1h" }
     );
     res.cookie("jwt", token);
-    res.status(201).json({
+    return res.status(201).json({
       message: "New User created through email.",
       data: user,
     });
@@ -114,7 +114,7 @@ const loginUser = async (req, res, next) => {
       { expiresIn: "1h" }
     );
     delete user.password;
-    res.status(200).json({
+    return res.status(200).json({
       message: "User logged in successfully",
       data: user,
     });
@@ -123,9 +123,17 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const logoutUser = async (req, res, next) => {
+  res.clearCookie("jwt");
+  return res.status(200).json({
+    message: "User logged out successfully",
+  });
+};
+
 module.exports = {
   registerUser,
   loginUser,
   googleCallbackHandler,
   facebookCallbackHandler,
+  logoutUser,
 };

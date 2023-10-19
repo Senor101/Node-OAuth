@@ -17,13 +17,13 @@ To install this project
 1. Clone the repository from GitHub:
 
    ```bash
-   git clone https://github.com/Senor101/
+   git clone https://github.com/Senor101/Node-OAuth.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-    cd
+    cd Node-OAuth
    ```
 
 3. Install the required dependencies:

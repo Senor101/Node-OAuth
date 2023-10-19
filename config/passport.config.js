@@ -42,22 +42,15 @@ const verifyJwtCallback = async (jwt_payload, done) => {
   }
 };
 
-const verifyGoogleCallback = (accessToken, refreshToken, profile, done) => {
-  // console.log(`Google callback ${profile}`);
-  return done(null, profile);
-};
-
-const verifyFacebookCallback = (accessToken, refreshToken, profile, done) => {
+const verifyCallback = (accessToken, refreshToken, profile, done) => {
   return done(null, profile);
 };
 
 passport.use(new JwtStrategy(JWT_OPTIONS, verifyJwtCallback));
 
-passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyGoogleCallback));
+passport.use(new GoogleStrategy(GOOGLE_AUTH_OPTIONS, verifyCallback));
 
-passport.use(
-  new FacebookStrategy(FACEBOOK_AUTH_OPTIONS, verifyFacebookCallback)
-);
+passport.use(new FacebookStrategy(FACEBOOK_AUTH_OPTIONS, verifyCallback));
 
 passport.serializeUser((user, done) => {
   // console.log(`user, ${user}`);
