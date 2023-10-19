@@ -14,13 +14,7 @@ router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-router.get(
-  "/profile",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.send(`THIS IS UR PROFILE MAAANNNN ${req.user.email}`);
-  }
-);
+
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),

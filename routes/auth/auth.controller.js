@@ -69,6 +69,17 @@ const registerUser = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     req.body.password = hashedPassword;
     const user = await User.create(req.body);
+    delete user.password;
+    let token = jwt.sign(
+      {
+        data: {
+          id: user._id,
+        },
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    res.cookie("jwt", token);
     res.status(201).json({
       message: "New User created through email.",
       data: user,
@@ -87,12 +98,21 @@ const loginUser = async (req, res, next) => {
         message: "User not found",
       });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({
         message: "Invalid password",
       });
     }
+    let token = jwt.sign(
+      {
+        data: {
+          id: user._id,
+        },
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
     delete user.password;
     res.status(200).json({
       message: "User logged in successfully",

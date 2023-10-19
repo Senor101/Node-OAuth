@@ -45,8 +45,6 @@ To install this project
 
 ## REST API
 
-This oauth project can be used as
-
 ### Google Oauth
 
 For using google oauth, access the google auth route as
