@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 
 const googleCallbackHandler = async (req, res, next) => {
   try {
-    console.log("redirected", req.user);
+    // console.log("redirected", req.user);
     let user = {
       name: req.user._json.name,
       email: req.user._json.email,

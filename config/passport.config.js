@@ -1,12 +1,10 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
-const jwt = require("jsonwebtoken");
 const config = require("./env.config");
 const { checkUser, findOrCreateUser } = require("../utils/functions.util");
 
-const JwtStrategy = require("passport-jwt").Strategy,
-  ExtractJwt = require("passport-jwt").ExtractJwt;
+const JwtStrategy = require("passport-jwt").Strategy;
 
 const cookieExtractor = (req) => {
   var token = null;
@@ -31,9 +29,7 @@ const FACEBOOK_AUTH_OPTIONS = {
 
 const verifyJwtCallback = async (jwt_payload, done) => {
   console.log(jwt_payload.data);
-  if (
-    await checkUser(jwt_payload.data.providerId, jwt_payload.data.providerId)
-  ) {
+  if (await checkUser(jwt_payload.data.providerId, jwt_payload.data.provider)) {
     console.log(`user found`);
     return done(null, jwt_payload.data);
   } else {

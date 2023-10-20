@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 
 const passport = require("passport");
 const router = express.Router();
@@ -29,6 +28,6 @@ router.post("/email/register", authController.registerUser);
 
 router.post("/email/login", authController.loginUser);
 
-router.post("/logout/:id", authController.logoutUser);
+router.post("/logout", authController.logoutUser);
 
 module.exports = router;
