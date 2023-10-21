@@ -7,12 +7,13 @@ const isAuthenticated = async (req, res, next) => {
       console.error(err);
       return next(err);
     }
-    console.log(`user ${user}`);
+    console.log(user);
     if (!user) {
       return res.status(401).json({
         message: "Unauthorized",
       });
     }
+    req.user = user.id;
     return next();
   })(req, res, next);
 };

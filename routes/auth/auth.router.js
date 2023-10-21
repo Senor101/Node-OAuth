@@ -1,5 +1,5 @@
 const express = require("express");
-
+const isAuthenticated = require("../../middleware/auth.middleware");
 const passport = require("passport");
 const router = express.Router();
 
@@ -28,6 +28,6 @@ router.post("/email/register", authController.registerUser);
 
 router.post("/email/login", authController.loginUser);
 
-router.post("/logout", authController.logoutUser);
+router.post("/logout", isAuthenticated, authController.logoutUser);
 
 module.exports = router;

@@ -122,6 +122,7 @@ const loginUser = async (req, res, next) => {
       { expiresIn: "1h" }
     );
     res.cookie("jwt", token);
+    // req.user = user._id;
     return res.status(200).json({
       message: "User logged in successfully",
       data: user,
@@ -132,13 +133,6 @@ const loginUser = async (req, res, next) => {
 };
 
 const logoutUser = async (req, res, next) => {
-  if (!req.user) {
-    return res.status(400).json({
-      error: {
-        message: "User not logged in",
-      },
-    });
-  }
   res.clearCookie("jwt");
   return res.status(200).json({
     message: "User logged out successfully",
