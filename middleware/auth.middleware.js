@@ -7,14 +7,12 @@ const isAuthenticated = async (req, res, next) => {
       console.error(err);
       return next(err);
     }
+    console.log(`user ${user}`);
     if (!user) {
       return res.status(401).json({
         message: "Unauthorized",
       });
     }
-    // console.log(user);
-    const requiredUser = await User.findOne({ providerId: user.providerId });
-    req.user = requiredUser._id;
     return next();
   })(req, res, next);
 };

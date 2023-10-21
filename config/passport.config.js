@@ -29,7 +29,7 @@ const FACEBOOK_AUTH_OPTIONS = {
 
 const verifyJwtCallback = async (jwt_payload, done) => {
   console.log(jwt_payload.data);
-  if (await checkUser(jwt_payload.data.providerId, jwt_payload.data.provider)) {
+  if (await checkUser(jwt_payload.data.id)) {
     console.log(`user found`);
     return done(null, jwt_payload.data);
   } else {

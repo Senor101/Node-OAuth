@@ -17,8 +17,7 @@ const googleCallbackHandler = async (req, res, next) => {
     let token = jwt.sign(
       {
         data: {
-          providerId: requiredUser.providerId,
-          provider: requiredUser.provider,
+          id: requiredUser._id,
         },
       },
       "secret",
@@ -65,7 +64,15 @@ const facebookCallbackHandler = async (req, res, next) => {
 
 const registerUser = async (req, res, next) => {
   try {
-    const { password } = req.body;
+    const { email, password } = req.body;
+    const userExists = await User.findOne({ email: email });
+    if (userExists) {
+      return res.status(409).json({
+        error: {
+          message: "User already exists",
+        },
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     req.body.password = hashedPassword;
     const user = await User.create(req.body);
@@ -98,12 +105,13 @@ const loginUser = async (req, res, next) => {
         message: "User not found",
       });
     }
-    const isPasswordValid = bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({
         message: "Invalid password",
       });
     }
+    delete user.password;
     let token = jwt.sign(
       {
         data: {
@@ -113,7 +121,7 @@ const loginUser = async (req, res, next) => {
       "secret",
       { expiresIn: "1h" }
     );
-    delete user.password;
+    res.cookie("jwt", token);
     return res.status(200).json({
       message: "User logged in successfully",
       data: user,
@@ -124,6 +132,13 @@ const loginUser = async (req, res, next) => {
 };
 
 const logoutUser = async (req, res, next) => {
+  if (!req.user) {
+    return res.status(400).json({
+      error: {
+        message: "User not logged in",
+      },
+    });
+  }
   res.clearCookie("jwt");
   return res.status(200).json({
     message: "User logged out successfully",
