@@ -62,6 +62,17 @@ const facebookCallbackHandler = async (req, res, next) => {
   }
 };
 
+const githubCallbackHandler = async (req, res, next) => {
+  try {
+    return res.status(200).json({
+      message: "blank",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const registerUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -122,7 +133,6 @@ const loginUser = async (req, res, next) => {
       { expiresIn: "1h" }
     );
     res.cookie("jwt", token);
-    // req.user = user._id;
     return res.status(200).json({
       message: "User logged in successfully",
       data: user,
@@ -144,5 +154,6 @@ module.exports = {
   loginUser,
   googleCallbackHandler,
   facebookCallbackHandler,
+  githubCallbackHandler,
   logoutUser,
 };

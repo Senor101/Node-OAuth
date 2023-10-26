@@ -25,6 +25,7 @@ const userSchema = new Schema({
   provider: {
     type: String,
     default: "local",
+    required: true,
   },
   providerId: {
     type: String,

@@ -24,6 +24,14 @@ router.get(
   authController.facebookCallbackHandler
 );
 
+router.get("/github", passport.authenticate("github"));
+
+router.get(
+  "/github/callback",
+  passport.authenticate("github", { session: false }),
+  authController.githubCallbackHandler
+);
+
 router.post("/email/register", authController.registerUser);
 
 router.post("/email/login", authController.loginUser);
