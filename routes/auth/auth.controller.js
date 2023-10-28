@@ -64,9 +64,26 @@ const facebookCallbackHandler = async (req, res, next) => {
 
 const githubCallbackHandler = async (req, res, next) => {
   try {
+    console.log(`redirected by github ${req.user}`);
+    let user = {
+      name: req.user._json.name,
+      provider: req.user.provider,
+      providerId: req.user._json.id,
+    };
+    const requiredUser = await findOrCreateUser(user);
+    let token = jwt.sign(
+      {
+        data: {
+          id: requiredUser._id,
+        },
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    res.cookie("jwt", token);
     return res.status(200).json({
-      message: "blank",
-      data: null,
+      message: "User logged in successfully",
+      data: user,
     });
   } catch (error) {
     next(error);
